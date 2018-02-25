@@ -5,76 +5,100 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoubleDeckerBar"
         mc:Ignorable="d"
-        Title="DoubleDeckerBar" Width="1024" Height="100" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent" FontFamily="Segoe UI" Topmost="True" ShowInTaskbar="False" ShowActivated="False">
+        Title="DoubleDeckerBar" Width="1024" Height="100" WindowStyle="None" ResizeMode="NoResize"
+        AllowsTransparency="True" Background="Transparent" FontFamily="Segoe UI" Topmost="True" ShowInTaskbar="False"
+        ShowActivated="False">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/DoubleDeckerBar;component/DefaultSkin.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/DoubleDeckerBar;component/DefaultSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{DynamicResource TaskbandHeight}"/>
-            <RowDefinition/>
+            <RowDefinition Height="{DynamicResource TaskbandHeight}" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <Control Style="{DynamicResource BackgroundStyle}" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Control Style="{DynamicResource BackgroundStyle}" Grid.RowSpan="2" HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch" />
         <DockPanel LastChildFill="True" Grid.Row="1">
-            <Button x:Name="Start" Style="{DynamicResource StartStyle}" Width="56" VerticalAlignment="Stretch" Click="Start_Click"/>
-            <StackPanel Width="56" DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Center" Background="{DynamicResource MetalBrush}">
+            <Button x:Name="Start" Style="{DynamicResource StartStyle}" Width="56" VerticalAlignment="Stretch"
+                    Click="Start_Click" />
+            <StackPanel Width="56" DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Center"
+                        Background="{DynamicResource MetalBrush}">
                 <Grid Width="36" Height="36">
-                    <Ellipse Fill="#FF666666" Stroke="Black" StrokeThickness="1"/>
+                    <Ellipse Fill="#FF666666" Stroke="Black" StrokeThickness="1" />
                     <Ellipse Fill="#FF171717" StrokeThickness="1" Margin="2">
                         <Ellipse.Stroke>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <LinearGradientBrush.GradientStops>
-                                    <GradientStop Offset="0" Color="#FF171717"/>
-                                    <GradientStop Offset="1" Color="#FF000000"/>
+                                    <GradientStop Offset="0" Color="#FF171717" />
+                                    <GradientStop Offset="1" Color="#FF000000" />
                                 </LinearGradientBrush.GradientStops>
                             </LinearGradientBrush>
                         </Ellipse.Stroke>
                     </Ellipse>
                     <Ellipse Margin="1" StrokeThickness="0" Stroke="Transparent">
                         <Ellipse.Fill>
-                            <RadialGradientBrush Center="0.6,0.6" GradientOrigin="0.475,0.475" RadiusX="0.625" RadiusY="0.625">
+                            <RadialGradientBrush Center="0.6,0.6" GradientOrigin="0.475,0.475" RadiusX="0.625"
+                                                 RadiusY="0.625">
                                 <RadialGradientBrush.GradientStops>
-                                    <GradientStop Offset="0.5" Color="Transparent"/>
-                                    <GradientStop Offset="0.75" Color="#20FFFFFF"/>
-                                    <GradientStop Offset="1" Color="#90FFFFFF"/>
+                                    <GradientStop Offset="0.5" Color="Transparent" />
+                                    <GradientStop Offset="0.75" Color="#20FFFFFF" />
+                                    <GradientStop Offset="1" Color="#90FFFFFF" />
                                 </RadialGradientBrush.GradientStops>
                             </RadialGradientBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="0" Stroke="Transparent" Fill="White" Width="4" Height="4"/>
+                    <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="0"
+                             Stroke="Transparent" Fill="White" Width="4" Height="4" />
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,2,0,0" Width="1" Height="15" Background="Gray"/>
+                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,2,0,0" Width="1"
+                                Height="15" Background="Gray" />
                         <Grid.RenderTransform>
-                            <RotateTransform x:Name="MinutesHandTransform" CenterX="18" CenterY="18"/>
+                            <RotateTransform x:Name="MinutesHandTransform" CenterX="18" CenterY="18" />
                         </Grid.RenderTransform>
                     </Grid>
                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" Width="1" Height="7" Background="Gray"/>
+                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" Width="1"
+                                Height="7" Background="Gray" />
                         <Grid.RenderTransform>
-                            <RotateTransform x:Name="HoursHandTransform" CenterX="18" CenterY="18"/>
+                            <RotateTransform x:Name="HoursHandTransform" CenterX="18" CenterY="18" />
                         </Grid.RenderTransform>
                     </Grid>
                 </Grid>
                 <DockPanel HorizontalAlignment="Center" Margin="0,5,0,-5">
-                    <TextBlock x:Name="ClockHours" DockPanel.Dock="Left" VerticalAlignment="Center" Foreground="White" FontSize="30" TextAlignment="Center" LineHeight="30" Margin="0,-2,0,2" LineStackingStrategy="BlockLineHeight">6</TextBlock>
-                    <TextBlock x:Name="ClockMinutes" DockPanel.Dock="Top" Foreground="White" FontSize="12" LineHeight="12" LineStackingStrategy="BlockLineHeight">25</TextBlock>
-                    <TextBlock x:Name="ClockAmOrPm" Foreground="White" FontSize="12" LineHeight="12" LineStackingStrategy="BlockLineHeight">pm</TextBlock>
+                    <TextBlock x:Name="ClockHours" DockPanel.Dock="Left" VerticalAlignment="Center" Foreground="White"
+                               FontSize="30" TextAlignment="Center" LineHeight="30" Margin="0,-2,0,2"
+                               LineStackingStrategy="BlockLineHeight">
+                        6
+                    </TextBlock>
+                    <TextBlock x:Name="ClockMinutes" DockPanel.Dock="Top" Foreground="White" FontSize="12"
+                               LineHeight="12" LineStackingStrategy="BlockLineHeight">
+                        25
+                    </TextBlock>
+                    <TextBlock x:Name="ClockAmOrPm" Foreground="White" FontSize="12" LineHeight="12"
+                               LineStackingStrategy="BlockLineHeight">
+                        pm
+                    </TextBlock>
                 </DockPanel>
             </StackPanel>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                    <Border Width="80" Background="{DynamicResource MetalBrush}" BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0"/>
-                    <Border Width="62" Background="{DynamicResource MetalBrush}" BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0"/>
-                    <Border Width="100" Background="{DynamicResource MetalBrush}" BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0"/>
+                    <Border Width="80" Background="{DynamicResource MetalBrush}"
+                            BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0" />
+                    <Border Width="62" Background="{DynamicResource MetalBrush}"
+                            BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0" />
+                    <Border Width="100" Background="{DynamicResource MetalBrush}"
+                            BorderBrush="{DynamicResource PanelEdge}" BorderThickness="1,0" />
                 </StackPanel>
             </Grid>
         </DockPanel>
-        <ScrollViewer x:Name="TaskBandScrollViewer" ScrollViewer.HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0" PreviewMouseWheel="ScrollViewer_MouseWheel">
-            <StackPanel x:Name="TaskBand" HorizontalAlignment="Center" VerticalAlignment="Stretch" Orientation="Horizontal" Margin="0,2"/>
+        <ScrollViewer x:Name="TaskBandScrollViewer" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden" Margin="0" PreviewMouseWheel="ScrollViewer_MouseWheel">
+            <StackPanel x:Name="TaskBand" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                        Orientation="Horizontal" Margin="0,2" />
         </ScrollViewer>
     </Grid>
 </Window>
