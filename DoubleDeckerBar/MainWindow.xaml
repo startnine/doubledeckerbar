@@ -20,7 +20,23 @@
         </Grid.RowDefinitions>
         <Control Style="{DynamicResource BackgroundStyle}" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <DockPanel LastChildFill="True" Grid.Row="1">
-            <Button x:Name="Start" Style="{DynamicResource StartStyle}" Width="56" VerticalAlignment="Stretch" Click="Start_Click"/>
+            <Button x:Name="Start" Style="{DynamicResource StartStyle}" Width="56" VerticalAlignment="Stretch" Click="Start_Click">
+                <Button.ContextMenu>
+                    <local:TouchableContextMenu>
+                        <MenuItem Header="¿ C L I C C"/>
+                        <MenuItem Header="or"/>
+                        <MenuItem Header="T O C C H ?"/>
+                    </local:TouchableContextMenu>
+                </Button.ContextMenu>
+            </Button>
+            <WrapPanel x:Name="QuickLaunch" Orientation="Vertical" Margin="5,7,5,0"/>
+            <!--Canvas Width="16" Height="16" Background="Red" Margin="0,0,7,7"/>
+                <Canvas Width="16" Height="16" Background="Blue" Margin="0,0,7,7"/>
+                <Canvas Width="16" Height="16" Background="Red" Margin="0,0,7,7"/>
+                <Canvas Width="16" Height="16" Background="Blue" Margin="0,0,7,7"/>
+                <Canvas Width="16" Height="16" Background="Red" Margin="0,0,7,7"/>
+                <Canvas Width="16" Height="16" Background="Blue" Margin="0,0,7,7"/>
+            </WrapPanel-->
             <StackPanel Width="56" DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Center" Background="{DynamicResource MetalBrush}">
                 <Grid Width="36" Height="36">
                     <Ellipse Fill="#FF666666" Stroke="Black" StrokeThickness="1"/>

@@ -54,17 +54,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ControlzEx">
-      <HintPath>..\..\Start9\Start9_API\bin\Debug\ControlzEx.dll</HintPath>
-    </Reference>
-    <Reference Include="Fluent">
-      <HintPath>..\..\Start9\Start9_API\bin\Debug\Fluent.dll</HintPath>
-    </Reference>
-    <Reference Include="PatrickStart">
-      <HintPath>..\..\PatrickStart\PatrickStart\bin\Debug\PatrickStart.exe</HintPath>
-    </Reference>
     <Reference Include="Start9.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.1.0.0-CI00011\lib\net40\Start9.Api.dll</HintPath>
+      <HintPath>..\packages\Start9.Api.1.0.0-CI00018\lib\net40\Start9.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn" />

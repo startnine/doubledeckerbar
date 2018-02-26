@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Start9.Api.Controls;
 using Start9.Api.Tools;
 using Start9.Api.Programs;
@@ -20,6 +19,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Drawing;
 using System.Windows.Media.Animation;
+using System.IO;
+using System.Windows.Controls.Primitives;
 
 namespace DoubleDeckerBar
 {
@@ -261,7 +262,7 @@ namespace DoubleDeckerBar
             Debug.WriteLine("WINDOW OPENED");
             Dispatcher.Invoke(new Action(() =>
             {
-                IconButton b = GetIconButton(e.Window.Hwnd);
+                IconButton b = GetIconButton(e.Window);
                 if (b != null)
                 {
                     TaskBand.Children.Add(b);
@@ -286,43 +287,77 @@ namespace DoubleDeckerBar
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            /*Binding scrollBinding = new Binding()
+            /*Start.ContextMenu = new TouchableContextMenu()
             {
-                Source = this,
-                Path = new PropertyPath("ScrollAnimator"),
-                Mode = BindingMode.OneWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            BindingOperations.SetBinding(TaskBandScrollViewer, MainWindow.ScrollAnimatorProperty, scrollBinding);*/
-
-            handle = ((System.Windows.Interop.HwndSource)System.Windows.Interop.HwndSource.FromVisual(this)).Handle;
-
-            current = GetWindow(handle, GetWindowCmd.First);
-
-            do
-            {
-                IntPtr style = GetWindowLongPtr64(new HandleRef(null, current), WinApi.GwlStyle);
-                IntPtr exStyle = GetWindowLongPtr64(new HandleRef(null, current), WinApi.GwlExstyle);
-                if ((Convert.ToBoolean(0x10000000 & style.ToInt64())) & (Convert.ToBoolean(exStyle.ToInt64() | WinApi.WsExToolwindow)))
+                ItemsSource = new List<MenuItem>()
                 {
-                    thumbs.Add(current);
+                    new MenuItem()
+                    {
+                        Header = "Test once"
+                    },
+                    new MenuItem()
+                    {
+                        Header = "Test again"
+                    },
+                    new MenuItem()
+                    {
+                        Header = "sample text"
+                    },
+                    new MenuItem()
+                    {
+                        Header = "¿ C L I C C"
+                    },
+                    new MenuItem()
+                    {
+                        Header = "or"
+                    },
+                    new MenuItem()
+                    {
+                        Header = "T O C C H ?"
+                    }
                 }
+            };*/
 
-                current = GetWindow(current, GetWindowCmd.Next);
-            }
-            while (current != IntPtr.Zero);
-
-
-            foreach (System.IntPtr thumb in thumbs)
+            foreach (ProgramWindow p in ProgramWindow.UserPerceivedProgramWindows)
             {
-                IconButton b = GetIconButton(thumb);
+                IconButton b = GetIconButton(p);
                 if (b != null)
                 {
                     TaskBand.Children.Add(b);
                 }
             }
 
-            _activeWindowTimer.Elapsed += delegate
+            foreach (string f in Directory.EnumerateFiles(Environment.ExpandEnvironmentVariables(@"%appdata%\microsoft\Internet Explorer\Quick Launch")))
+            {
+                string path = f;
+                if (Path.GetExtension(path).Contains("lnk"))
+                {
+                    //Get Executable instead of shortcut here ASAP
+                    path = ShortcutTools.GetTargetPath(path);
+                }
+                Button quickButton = new Button()
+                {
+                    Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16)),
+                    BorderThickness = new Thickness(0),
+                    Width = 16,
+                    Height = 16,
+                    Margin = new Thickness(0, 0, 7, 7)
+                };
+                quickButton.Click += delegate
+                {
+                    try
+                    {
+                        Process.Start(path);
+                    }
+                    catch
+                    {
+
+                    }
+                };
+                QuickLaunch.Children.Add(quickButton);
+            }
+
+                _activeWindowTimer.Elapsed += delegate
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
@@ -390,12 +425,10 @@ namespace DoubleDeckerBar
         }
 
         
-        public IconButton GetIconButton(IntPtr hWnd)
+        public IconButton GetIconButton(ProgramWindow p)
         {
-            //TaskBand.Children.Add(taskItemButton);
-            ProgramWindow p = new ProgramWindow(hWnd);
             IconButton taskItemButton;
-            if (((!(string.IsNullOrWhiteSpace(p.Name)))) & (hWnd != new WindowInteropHelper(this).Handle))
+            if (((!(string.IsNullOrWhiteSpace(p.Name)))) & (p.Hwnd != new WindowInteropHelper(this).Handle))
             {
                 taskItemButton = new IconButton()
                 {
@@ -409,11 +442,13 @@ namespace DoubleDeckerBar
                     {
                         Width = 16,
                         Height = 16,
-                        Background = new ImageBrush(GetIconFromProgramWindowWithoutGoingThroughCoreDllBecauseWeSupportWindowsNotTen(p).ToBitmapSource())
+                        //Background = new ImageBrush(GetIconFromProgramWindowWithoutGoingThroughCoreDllBecauseWeSupportWindowsNotTen(p).ToBitmapSource())
+                        Background = new ImageBrush(p.Icon.ToBitmapSource())
                     };
                 }
                 catch { Debug.WriteLine("ICON FAILED"); };
                 taskItemButton.Click += TaskItemButton_Click;
+                taskItemButton.MouseRightButtonUp += delegate { p.ShowSystemMenu(); };
                 return taskItemButton;
             }
             else
