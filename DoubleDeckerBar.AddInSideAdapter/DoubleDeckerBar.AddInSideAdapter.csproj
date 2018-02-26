@@ -31,8 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Start9.Api.Contracts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.Contracts.1.0.0-CI00010\lib\net40\Start9.Api.Contracts.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\Start9.Api.Contracts.1.0.0-CI00020\lib\net40\Start9.Api.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn" />
@@ -49,13 +48,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DoubleDeckerBar.AddInView\DoubleDeckerBar.AddInView.csproj">
       <Project>{F1B6CB15-8B87-49A5-B14A-3775A608CDD3}</Project>
       <Name>DoubleDeckerBar.AddInView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
