@@ -1094,7 +1094,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style x:Key="{x:Type local:TouchableContextMenu}" TargetType="{x:Type local:TouchableContextMenu}">
+    <Style x:Key="{x:Type apictrl:TouchableContextMenu}" TargetType="{x:Type apictrl:TouchableContextMenu}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />
         <Setter Property="Margin" Value="5,0,0,5"/>
@@ -1118,7 +1118,7 @@
                     <Setter Property="BorderBrush" Value="#01000000" />
                     <Setter Property="Padding" Value="10,0" />
                     <Setter Property="Margin" Value="0,0,0,3" />
-                    <Setter Property="IsManipulationEnabled" Value="{Binding OpenedWithTouch, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TouchableContextMenu}}}"/>
+                    <Setter Property="IsManipulationEnabled" Value="{Binding OpenedWithTouch, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type apictrl:TouchableContextMenu}}}"/>
                     <Style.Triggers>
                         <Trigger Property="Role" Value="TopLevelHeader">
                             <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>

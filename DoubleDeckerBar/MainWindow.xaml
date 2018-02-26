@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoubleDeckerBar"
+        xmlns:apictrl="clr-namespace:Start9.Api.Controls;assembly=Start9.Api"
         mc:Ignorable="d"
         Title="DoubleDeckerBar" Width="1024" Height="100" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent" FontFamily="Segoe UI" Topmost="True" ShowInTaskbar="False" ShowActivated="False">
     <Window.Resources>
@@ -22,11 +23,11 @@
         <DockPanel LastChildFill="True" Grid.Row="1">
             <Button x:Name="Start" Style="{DynamicResource StartStyle}" Width="56" VerticalAlignment="Stretch" Click="Start_Click">
                 <Button.ContextMenu>
-                    <local:TouchableContextMenu>
+                    <apictrl:TouchableContextMenu>
                         <MenuItem Header="¿ C L I C C"/>
                         <MenuItem Header="or"/>
                         <MenuItem Header="T O C C H ?"/>
-                    </local:TouchableContextMenu>
+                    </apictrl:TouchableContextMenu>
                 </Button.ContextMenu>
             </Button>
             <WrapPanel x:Name="QuickLaunch" Orientation="Vertical" Margin="5,7,5,0"/>
