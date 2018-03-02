@@ -55,7 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Start9.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.1.0.0-CI00020\lib\net40\Start9.Api.dll</HintPath>
+      <HintPath>..\packages\Start9.Api.1.0.0-CI00029\lib\net40\Start9.Api.dll</HintPath>
     </Reference>
     <Reference Include="Start9.Api.Contracts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Start9.Api.Contracts.1.0.0-CI00020\lib\net40\Start9.Api.Contracts.dll</HintPath>

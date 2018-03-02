@@ -81,6 +81,7 @@
 
     <Style x:Key="TaskItemButtonStyle" TargetType="{x:Type apictrl:IconButton}">
         <Setter Property="Width" Value="134" />
+        <Setter Property="MinWidth" Value="50" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Margin" Value="0" />
@@ -232,6 +233,77 @@
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="SelectedBackground"
                                                          Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.5" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="QuickLaunchButton" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0,0,-0.667"/>
+        <!--4,4,5,5-->
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Width" Value="26"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Border x:Name="HoverBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" CornerRadius="4" BorderThickness="1" BorderBrush="#7F000000" Opacity="0">
+                            <Border BorderBrush="#C0FFFFFF" BorderThickness="1" CornerRadius="3">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <LinearGradientBrush.GradientStops>
+                                            <GradientStop Offset="0" Color="#AAFFFFFF"/>
+                                            <GradientStop Offset="0.5" Color="#7FFFFFFF"/>
+                                            <GradientStop Offset="0.5" Color="#30FFFFFF"/>
+                                            <GradientStop Offset="1" Color="#50FFFFFF"/>
+                                        </LinearGradientBrush.GradientStops>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                        </Border>
+                        <ContentControl x:Name="ContentControl" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}" Focusable="False" IsTabStop="False" Width="16" Height="16" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverBackground" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.125" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverBackground" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentControl" Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentControl" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.25" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
@@ -1094,52 +1166,50 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <Style x:Key="{x:Type MenuItem}" TargetType="MenuItem">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Height" Value="25" />
+        <Setter Property="MinWidth" Value="175"/>
+        <Setter Property="Background" Value="#01000000" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="FontFamily" Value="Franklin Gothic Book" />
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontStyle" Value="Normal" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="#01000000" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="Margin" Value="0,0,0,3" />
+        <Setter Property="IsManipulationEnabled" Value="{Binding OpenedWithTouch, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type apictrl:TouchableContextMenu}}}"/>
+        <Style.Triggers>
+            <Trigger Property="Role" Value="TopLevelHeader">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>
+                <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
+            </Trigger>
+            <Trigger Property="Role" Value="TopLevelItem">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}"/>
+            </Trigger>
+            <Trigger Property="Role" Value="SubmenuHeader">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>
+            </Trigger>
+            <Trigger Property="Role" Value="SubmenuItem">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}"/>
+            </Trigger>
+            <Trigger Property="IsManipulationEnabled" Value="True">
+                <Setter Property="Height" Value="46.590925" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="{x:Type apictrl:TouchableContextMenu}" TargetType="{x:Type apictrl:TouchableContextMenu}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />
         <Setter Property="Margin" Value="5,0,0,5"/>
         <Setter Property="Padding" Value="3,3,3,0"/>
         <Setter Property="HasDropShadow" Value="False" />
-        <Setter Property="ItemContainerStyle">
-            <Setter.Value>
-                <Style TargetType="MenuItem">
-                    <Setter Property="OverridesDefaultStyle" Value="True"/>
-                    <Setter Property="Height" Value="25" />
-                    <Setter Property="MinWidth" Value="175"/>
-                    <Setter Property="Background" Value="#01000000" />
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="FontFamily" Value="Franklin Gothic Book" />
-                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    <Setter Property="FontSize" Value="12" />
-                    <Setter Property="FontStyle" Value="Normal" />
-                    <Setter Property="FontWeight" Value="Normal" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="BorderBrush" Value="#01000000" />
-                    <Setter Property="Padding" Value="10,0" />
-                    <Setter Property="Margin" Value="0,0,0,3" />
-                    <Setter Property="IsManipulationEnabled" Value="{Binding OpenedWithTouch, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type apictrl:TouchableContextMenu}}}"/>
-                    <Style.Triggers>
-                        <Trigger Property="Role" Value="TopLevelHeader">
-                            <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>
-                            <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
-                        </Trigger>
-                        <Trigger Property="Role" Value="TopLevelItem">
-                            <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}"/>
-                        </Trigger>
-                        <Trigger Property="Role" Value="SubmenuHeader">
-                            <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}"/>
-                        </Trigger>
-                        <Trigger Property="Role" Value="SubmenuItem">
-                            <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}"/>
-                        </Trigger>
-                        <Trigger Property="IsManipulationEnabled" Value="True">
-                            <Setter Property="Height" Value="46.590925" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Type MenuItem}}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
@@ -1174,6 +1244,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-
     <!--#endregion ContextMenu Styles-->
 </ResourceDictionary>

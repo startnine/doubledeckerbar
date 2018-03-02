@@ -17,7 +17,7 @@ using System.Timers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using System.Drawing;
+//using System.Drawing;
 using System.Windows.Media.Animation;
 using System.IO;
 using System.Windows.Controls.Primitives;
@@ -29,6 +29,10 @@ namespace DoubleDeckerBar
     /// </summary>
     public partial class MainWindow : Window
     {
+        //TEMPORARY STAND-INS FOR SETTINGS
+        bool groupItems = true;
+        //END TEMPORARY STAND-INS FOR SETTINGS
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
@@ -193,6 +197,8 @@ namespace DoubleDeckerBar
             Interval = 1
         };
 
+        IntPtr activeWin = IntPtr.Zero;
+
         readonly Timer _clockTimer = new Timer
         {
             Interval = 1
@@ -265,7 +271,35 @@ namespace DoubleDeckerBar
                 IconButton b = GetIconButton(e.Window);
                 if (b != null)
                 {
-                    TaskBand.Children.Add(b);
+                    if (groupItems)
+                    {
+                        bool isAdded = false;
+                        foreach (StackPanel s in TaskBand.Children)
+                        {
+                            if ((s.Tag.ToString() == (b.Tag as ProgramWindow).Process.MainModule.FileName) & !isAdded)
+                            {
+                                s.Children.Add(b);
+                                isAdded = true;
+                            }
+                        }
+
+                        if (!isAdded)
+                        {
+                            var programStackPanel = new StackPanel
+                            {
+                                Tag = (b.Tag as ProgramWindow).Process.MainModule.FileName,
+                                Orientation = Orientation.Horizontal,
+                                Background = new SolidColorBrush(Color.FromArgb(0x01, 0x0, 0x0, 0x0)),
+                                VerticalAlignment = VerticalAlignment.Stretch,
+                            };
+                            programStackPanel.Children.Add(b);
+                            TaskBand.Children.Add(programStackPanel);
+                        }
+                    }
+                    else
+                    {
+                        TaskBand.Children.Add(b);
+                    }
                 }
             }));
         }
@@ -318,12 +352,52 @@ namespace DoubleDeckerBar
                 }
             };*/
 
-            foreach (ProgramWindow p in ProgramWindow.UserPerceivedProgramWindows)
+
+            if (groupItems)
             {
-                IconButton b = GetIconButton(p);
-                if (b != null)
+                List<string> RunningProcesses = new List<string>();
+
+                foreach (var wind in ProgramWindow.UserPerceivedProgramWindows)
                 {
-                    TaskBand.Children.Add(b);
+                    if (!RunningProcesses.Contains(wind.Process.MainModule.FileName))
+                    {
+                        RunningProcesses.Add(wind.Process.MainModule.FileName);
+                    }
+                }
+
+                foreach (var s in RunningProcesses)
+                {
+                    var programStackPanel = new StackPanel
+                    {
+                        Tag = s,
+                        Orientation = Orientation.Horizontal,
+                        Background = new SolidColorBrush(Color.FromArgb(0x01, 0x0, 0x0, 0x0)),
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                    };
+
+                    TaskBand.Children.Add(programStackPanel);
+                }
+
+                foreach (var wind in ProgramWindow.UserPerceivedProgramWindows)
+                {
+                    foreach (StackPanel t in TaskBand.Children)
+                    {
+                        if (wind.Process.MainModule.FileName == t.Tag.ToString())
+                        {
+                            t.Children.Add(GetIconButton(wind));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (ProgramWindow p in ProgramWindow.UserPerceivedProgramWindows)
+                {
+                    IconButton b = GetIconButton(p);
+                    if (b != null)
+                    {
+                        TaskBand.Children.Add(b);
+                    }
                 }
             }
 
@@ -335,40 +409,58 @@ namespace DoubleDeckerBar
                     //Get Executable instead of shortcut here ASAP
                     path = ShortcutTools.GetTargetPath(path);
                 }
-                Button quickButton = new Button()
-                {
-                    Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16)),
-                    BorderThickness = new Thickness(0),
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(0, 0, 7, 7)
-                };
-                quickButton.Click += delegate
-                {
-                    try
-                    {
-                        Process.Start(path);
-                    }
-                    catch
-                    {
-
-                    }
-                };
-                QuickLaunch.Children.Add(quickButton);
+                QuickLaunch.Children.Add(GetQuickLaunchButton(path));
             }
 
-                _activeWindowTimer.Elapsed += delegate
+            _activeWindowTimer.Elapsed += delegate
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    var active = WinApi.GetForegroundWindow();
-                    for (int i = 0; i < TaskBand.Children.Count; i++)
+                    if ((WinApi.GetForegroundWindow() != new WindowInteropHelper(this).Handle) & (WinApi.GetForegroundWindow() != IntPtr.Zero))
                     {
-                        IconButton t = TaskBand.Children[i] as IconButton;
-                        var prwnd = (t.Tag as ProgramWindow).Hwnd;
-                        try
+                        activeWin = WinApi.GetForegroundWindow();
+                    }
+                    if (groupItems)
+                    {
+                        for (int j = 0; j < TaskBand.Children.Count; j++)
                         {
-                            if (prwnd == active)
+                            StackPanel f = TaskBand.Children[j] as StackPanel;
+                            for (int i = 0; i < f.Children.Count; i++)
+                            {
+                                IconButton t = f.Children[i] as IconButton;
+                                var prwnd = (t.Tag as ProgramWindow).Hwnd;
+                                if (prwnd == activeWin)
+                                {
+                                    if (t.IsEnabled)
+                                    {
+                                        t.BringIntoView();
+                                    }
+                                    t.IsEnabled = false;
+                                }
+                                else if (IsWindow(prwnd))
+                                {
+                                    t.IsEnabled = true;
+                                }
+                                else
+                                {
+                                    f.Children.Remove(t);
+                                    i = i - 1;
+                                }
+                            }
+                            if (f.Children.Count < 1)
+                            {
+                                TaskBand.Children.Remove(f);
+                                j = j - 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < TaskBand.Children.Count; i++)
+                        {
+                            IconButton t = TaskBand.Children[i] as IconButton;
+                            var prwnd = (t.Tag as ProgramWindow).Hwnd;
+                            if (prwnd == activeWin)
                             {
                                 if (t.IsEnabled)
                                 {
@@ -386,11 +478,7 @@ namespace DoubleDeckerBar
                                 i = i - 1;
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex);
-                        }
-                }
+                    }
                 }));
             };
             _activeWindowTimer.Start();
@@ -419,23 +507,204 @@ namespace DoubleDeckerBar
                         ClockMinutes.Text = DateTime.Now.Minute.ToString();
                     }
                     ClockAmOrPm.Text = DateTime.Now.ToString("tt", System.Globalization.CultureInfo.InvariantCulture).ToLower();
+
+                    ClockStackPanel.ToolTip = new ToolTip()
+                    {
+                        Content = DateTime.Now.ToLongDateString() + "\n" + DateTime.Now.DayOfWeek.ToString()
+                    };
+
+
+                    if (TaskBand.Children.Count > 0)
+                    {
+                        if ((134 * TaskBand.Children.Count) > TaskBandScrollViewer.ActualWidth)
+                        {
+                            if (groupItems)
+                            {
+                                foreach (StackPanel s in TaskBand.Children)
+                                {
+                                    foreach (IconButton b in s.Children)
+                                    {
+                                        b.Width = TaskBandScrollViewer.ActualWidth / TaskBand.Children.Count;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (IconButton b in TaskBand.Children)
+                                {
+                                    b.Width = TaskBandScrollViewer.ActualWidth / TaskBand.Children.Count;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (groupItems)
+                            {
+                                foreach (StackPanel s in TaskBand.Children)
+                                {
+                                    foreach (IconButton b in s.Children)
+                                    {
+                                        b.Width = 134;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (IconButton b in TaskBand.Children)
+                                {
+                                    b.Width = 134;
+                                }
+                            }
+                        }
+                    }
                 }));
+
             };
             _clockTimer.Start();
         }
 
-        
+
         public IconButton GetIconButton(ProgramWindow p)
         {
             IconButton taskItemButton;
             if (((!(string.IsNullOrWhiteSpace(p.Name)))) & (p.Hwnd != new WindowInteropHelper(this).Handle))
             {
+
                 taskItemButton = new IconButton()
                 {
                     Content = p.Name,
                     Style = (Style)Resources["TaskItemButtonStyle"],
                     Tag = p
                 };
+
+                StackPanel flyoutContent = new StackPanel()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(0, 1, 0, -1)
+                };
+
+                Window flyoutWindow = new Window()
+                {
+                    BorderThickness = new Thickness(0),
+                    BorderBrush = new SolidColorBrush(Colors.Transparent),
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    Width = 200,
+                    Height = 115,
+                    Opacity = 0,
+                    WindowStyle = WindowStyle.None,
+                    ResizeMode = ResizeMode.NoResize,
+                    AllowsTransparency = true,
+                    Topmost = true,
+                    Focusable = false,
+                    ShowActivated = false,
+                    Content = new Border()
+                    {
+                        CornerRadius = new CornerRadius(8),
+                        BorderThickness = new Thickness(1),
+                        BorderBrush = new SolidColorBrush(Color.FromArgb(0x7F, 0x00, 0x00, 0x00)),
+                        Background = new SolidColorBrush(Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF)),
+                        Child = new Border()
+                        {
+                            CornerRadius = new CornerRadius(6),
+                            BorderThickness = new Thickness(2, 1, 2, 1),
+                            BorderBrush = new SolidColorBrush(Color.FromArgb(0x90, 0xFF, 0xFF, 0xFF)),
+                            Background = new LinearGradientBrush()
+                            {
+                                StartPoint = new Point(0, 0),
+                                EndPoint = new Point(0, 1),
+                                GradientStops = new GradientStopCollection()
+                                {
+                                    new GradientStop()
+                                    {
+                                        Offset= -0.0625,
+                                        Color = Color.FromArgb(0xC0, 0xFF, 0xFF, 0xFF)
+                                    },
+                                    new GradientStop()
+                                    {
+                                        Offset= 0.3125,
+                                        Color = Colors.Transparent
+                                    },
+                                    new GradientStop()
+                                    {
+                                        Offset= 1,
+                                        Color = Color.FromArgb(0x7F, 0xFF, 0xFF, 0xFF)
+                                    },
+                                }
+                            },
+                            Child = flyoutContent
+                        }
+                    }
+                };
+                flyoutWindow.Deactivated += (object sneder, EventArgs args) =>
+                {
+                    AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
+                };
+
+                MenuItem newWindowMenuItem = new MenuItem()
+                {
+                    Header = "New Window",
+                    Style = (Style)Resources[typeof(MenuItem)]
+                };
+                newWindowMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                {
+                    Process.Start(p.Process.MainModule.FileName);
+                    AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
+                };
+                flyoutContent.Children.Add(newWindowMenuItem);
+
+                MenuItem quickLaunchItem = new MenuItem()
+                {
+                    Header = "Add to Quick Launch",
+                    Style = (Style)Resources[typeof(MenuItem)]
+                };
+                quickLaunchItem.Click += (object sneder, RoutedEventArgs args) =>
+                {
+                    Button b = GetExistingQuickLaunchButton((taskItemButton.Tag as ProgramWindow).Process.MainModule.FileName);
+                    if (b == null)
+                    {
+                        QuickLaunch.Children.Add(GetQuickLaunchButton(p.Process.MainModule.FileName));
+                    }
+                    else
+                    {
+                        QuickLaunch.Children.Remove(b);
+                    }
+
+                    AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
+                };
+                flyoutContent.Children.Add(quickLaunchItem);
+
+                MenuItem closeWindowMenuItem = new MenuItem()
+                {
+                    Header = "Close Window",
+                    Style = (Style)Resources[typeof(MenuItem)]
+                };
+                closeWindowMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                {
+                    p.Close();
+                    AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
+                };
+                flyoutContent.Children.Add(closeWindowMenuItem);
+
+                if (groupItems)
+                {
+                    MenuItem closeAllWindowsMenuItem = new MenuItem()
+                    {
+                        Header = "Close All Application's Windows",
+                        Style = (Style)Resources[typeof(MenuItem)]
+                    };
+                    closeAllWindowsMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                    {
+                        foreach (Button b in (taskItemButton.Parent as StackPanel).Children)
+                        {
+                            (b.Tag as ProgramWindow).Close();
+                        }
+                        AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
+                    };
+                    flyoutContent.Children.Add(closeAllWindowsMenuItem);
+                }
+
                 try
                 {
                     taskItemButton.Icon = new Canvas()
@@ -446,9 +715,24 @@ namespace DoubleDeckerBar
                         Background = new ImageBrush(p.Icon.ToBitmapSource())
                     };
                 }
-                catch { Debug.WriteLine("ICON FAILED"); };
+                catch (System.ArgumentNullException ex)
+                {
+                    Debug.WriteLine("ICON FAILED\n" + ex);
+                }
+
                 taskItemButton.Click += TaskItemButton_Click;
-                taskItemButton.MouseRightButtonUp += delegate { p.ShowSystemMenu(); };
+                taskItemButton.MouseRightButtonUp += (object sneder, MouseButtonEventArgs args) =>
+                {
+                    if (GetExistingQuickLaunchButton((taskItemButton.Tag as ProgramWindow).Process.MainModule.FileName) == null)
+                    {
+                        quickLaunchItem.Header = "Add to Quick Launch";
+                    }
+                    else
+                    {
+                        quickLaunchItem.Header = "Remove from Quick Launch";
+                    }
+                    AnimateFlyoutWindow(taskItemButton, flyoutWindow, true);
+                };
                 return taskItemButton;
             }
             else
@@ -457,36 +741,105 @@ namespace DoubleDeckerBar
             }
         }
 
-        private Icon GetIconFromProgramWindowWithoutGoingThroughCoreDllBecauseWeSupportWindowsNotTen(ProgramWindow p)
+        public void AnimateFlyoutWindow(UIElement sender, Window target, bool show)
         {
-                var iconHandle = SendMessage(p.Hwnd, WmGeticon, IconSmall2, 0);
+            QuinticEase ease = new QuinticEase()
+            {
+                EasingMode = EasingMode.EaseOut
+            };
+            DoubleAnimation opacityAnimation = new DoubleAnimation()
+            {
+                EasingFunction = ease
+            };
+            ThicknessAnimation marginAnimation = new ThicknessAnimation()
+            {
+                EasingFunction = ease
+            };
 
-                if (iconHandle == IntPtr.Zero)
-                    iconHandle = SendMessage(p.Hwnd, WmGeticon, IconSmall, 0);
-                if (iconHandle == IntPtr.Zero)
-                    iconHandle = SendMessage(p.Hwnd, WmGeticon, IconBig, 0);
-                if (iconHandle == IntPtr.Zero)
-                    iconHandle = WinApi.GetClassLongPtr(p.Hwnd, GclHicon);
-                if (iconHandle == IntPtr.Zero)
-                    iconHandle = WinApi.GetClassLongPtr(p.Hwnd, GclHiconsm);
+            if (show)
+            {
+                target.Left = MainTools.GetDpiScaledGlobalControlPosition(sender).X + ((sender as Control).Width / 2) - (target.Width / 2);
+                target.Top = Top - target.Height;
+                target.Show();
+                target.Focus();
+                target.Activate();
+                opacityAnimation.From = 0;
+                opacityAnimation.To = 1;
+                marginAnimation.From = new Thickness(0, 50, 0, -50);
+                marginAnimation.To = new Thickness(0);
+            }
+            else
+            {
+                opacityAnimation.From = 1;
+                opacityAnimation.To = 0;
+                marginAnimation.From = new Thickness(0);
+                marginAnimation.To = new Thickness(0, 50, 0, -50);
+                marginAnimation.Completed += (object sneder, EventArgs args) =>
+                {
+                    target.Hide();
+                };
+            }
+            target.BeginAnimation(Window.OpacityProperty, opacityAnimation);
+            target.BeginAnimation(Window.MarginProperty, marginAnimation);
+        }
 
-                if (iconHandle == IntPtr.Zero)
-                    return null;
-
+        public Button GetQuickLaunchButton(string path)
+        {
+            Button quickButton = new Button()
+            {
+                Style = (Style)Resources["QuickLaunchButton"],
+                Tag = path,
+                Content = new Canvas()
+                {
+                    Width = 16,
+                    Height = 16,
+                    Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16))
+                }
+                /*Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16)),
+                BorderThickness = new Thickness(0),
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 7, 7)*/
+            };
+            quickButton.Click += delegate
+            {
                 try
                 {
-                    return System.Drawing.Icon.FromHandle(iconHandle);
+                    Process.Start(path);
                 }
-                finally
+                catch
                 {
-                    WinApi.DestroyIcon(iconHandle);
+
                 }
+            };
+            return quickButton;
+        }
+
+        private Button GetExistingQuickLaunchButton(string fileName)
+        {
+            Button isInQuickLaunch = null;
+            foreach (Button b in QuickLaunch.Children)
+            {
+                if ((b.Tag.ToString()) == fileName)
+                {
+                    isInQuickLaunch = b;
+                }
+            }
+            return isInQuickLaunch;
         }
 
         private void TaskItemButton_Click(object sender, RoutedEventArgs e)
         {
             var programWindow = ((sender as IconButton).Tag as ProgramWindow);
-            programWindow.Show();
+            var button = (sender as IconButton);
+            if (button.IsEnabled)
+            {
+                programWindow.Show();
+            }
+            else
+            {
+                programWindow.Minimize();
+            }
         }
 
         private void ScrollViewer_MouseWheel(object sender, MouseWheelEventArgs e)
