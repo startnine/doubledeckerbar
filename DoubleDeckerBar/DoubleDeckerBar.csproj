@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(userprofile)\AppData\Roaming\Start9\AddIns\CalcV1\</OutputPath>
+    <OutputPath>$(AppData)\Start9\Pipeline\AddIns\CalcV1</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>$(AppData)\Start9\Pipeline\AddIns\DoubleDeckerBar\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -55,10 +55,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Start9.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.1.0.0-CI00029\lib\net40\Start9.Api.dll</HintPath>
+      <HintPath>..\packages\Start9.Api.1.0.0-CI00045\lib\net40\Start9.Api.dll</HintPath>
     </Reference>
     <Reference Include="Start9.Api.Contracts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.Contracts.1.0.0-CI00020\lib\net40\Start9.Api.Contracts.dll</HintPath>
+      <HintPath>..\packages\Start9.Api.Contracts.1.0.0-CI00045\lib\net40\Start9.Api.Contracts.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn" />
@@ -93,7 +94,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CalculatorAddIn.cs" />
+    <Compile Include="DoubleDeckerBarAddIn.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -124,9 +125,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DoubleDeckerBar.AddInView\DoubleDeckerBar.AddInView.csproj">
-      <Project>{f1b6cb15-8b87-49a5-b14a-3775a608cdd3}</Project>
-      <Name>DoubleDeckerBar.AddInView</Name>
+    <ProjectReference Include="..\DoubleDeckerBar.View\DoubleDeckerBar.View.csproj">
+      <Project>{bfa103d8-e228-4287-bf13-de27c44a79c8}</Project>
+      <Name>DoubleDeckerBar.View</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DoubleDeckerBar.AddInSideAdapter")]
+[assembly: AssemblyTitle("DoubleDeckerBar.Adapter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DoubleDeckerBar.AddInSideAdapter")]
+[assembly: AssemblyProduct("DoubleDeckerBar.Adapter")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("94a6ee22-90e9-4daa-8249-0258d5c935c9")]
+[assembly: Guid("34042778-83ab-4866-a72b-e8fb7f5a63b4")]
 
 // Version information for an assembly consists of the following four values:
 //

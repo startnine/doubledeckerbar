@@ -30,11 +30,11 @@ namespace DoubleDeckerBar
     public partial class MainWindow : Window
     {
         //TEMPORARY STAND-INS FOR SETTINGS
-        bool groupItems = true;
+        Boolean groupItems = true;
         //END TEMPORARY STAND-INS FOR SETTINGS
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, Int32 Msg, Int32 wParam, Int32 lParam);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCmd uCmd);
@@ -46,11 +46,11 @@ namespace DoubleDeckerBar
         struct DWM_BLURBEHIND
         {
             public DWM_BB dwFlags;
-            public bool fEnable;
+            public Boolean fEnable;
             public IntPtr hRgnBlur;
-            public bool fTransitionOnMaximized;
+            public Boolean fTransitionOnMaximized;
 
-            public DWM_BLURBEHIND(bool enabled)
+            public DWM_BLURBEHIND(Boolean enabled)
             {
                 fEnable = enabled ? true : false;
                 hRgnBlur = IntPtr.Zero;
@@ -63,7 +63,7 @@ namespace DoubleDeckerBar
                 get { return System.Drawing.Region.FromHrgn(hRgnBlur); }
             }
 
-            public bool TransitionOnMaximized
+            public Boolean TransitionOnMaximized
             {
                 get { return fTransitionOnMaximized != false; }
                 set
@@ -89,7 +89,7 @@ namespace DoubleDeckerBar
         }
 
         [Flags]
-        public enum ThumbnailFlags : int
+        public enum ThumbnailFlags : Int32
         {
             RectDetination = 1,
             RectSource = 2,
@@ -98,7 +98,7 @@ namespace DoubleDeckerBar
             SourceClientAreaOnly = 16
         }
 
-        public enum GetWindowCmd : uint
+        public enum GetWindowCmd : UInt32
         {
             First = 0,
             Last = 1,
@@ -109,16 +109,16 @@ namespace DoubleDeckerBar
             EnabledPopup = 6
         }
 
-        const int GclHiconsm = -34;
-        const int GclHicon = -14;
-        const int IconSmall = 0;
-        const int IconBig = 1;
-        const int IconSmall2 = 2;
-        const int WmGeticon = 0x7F;
-        const int GWL_STYLE = -16;
-        const int GWL_EXSTYLE = -20;
-        const int TASKSTYLE = 0x10000000 | 0x00800000;
-        const int WS_EX_TOOLWINDOW = 0x00000080;
+        const Int32 GclHiconsm = -34;
+        const Int32 GclHicon = -14;
+        const Int32 IconSmall = 0;
+        const Int32 IconBig = 1;
+        const Int32 IconSmall2 = 2;
+        const Int32 WmGeticon = 0x7F;
+        const Int32 GWL_STYLE = -16;
+        const Int32 GWL_EXSTYLE = -20;
+        const Int32 TASKSTYLE = 0x10000000 | 0x00800000;
+        const Int32 WS_EX_TOOLWINDOW = 0x00000080;
 
         public IntPtr current = IntPtr.Zero;
         public IntPtr handle = IntPtr.Zero;
@@ -126,7 +126,7 @@ namespace DoubleDeckerBar
         public List<IntPtr> thumbs = new List<IntPtr>();
 
 
-        public static IntPtr GetWindowLong(HandleRef hWnd, int nIndex)
+        public static IntPtr GetWindowLong(HandleRef hWnd, Int32 nIndex)
         {
             if (IntPtr.Size == 4)
             {
@@ -137,21 +137,21 @@ namespace DoubleDeckerBar
 
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLong", CharSet = CharSet.Auto)]
-        private static extern IntPtr GetWindowLong32(HandleRef hWnd, int nIndex);
+        private static extern IntPtr GetWindowLong32(HandleRef hWnd, Int32 nIndex);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Auto)]
-        private static extern IntPtr GetWindowLongPtr64(HandleRef hWnd, int nIndex);
+        private static extern IntPtr GetWindowLongPtr64(HandleRef hWnd, Int32 nIndex);
 
         // 1. Change the function to call the Unicode variant, where applicable.
         // 2. Ask the marshaller to alert you to any errors that occur.
         // 3. Change the parameter types to make marshaling easier. 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SystemParametersInfo(
-                                                        int uiAction,
-                                                        int uiParam,
+        private static extern Boolean SystemParametersInfo(
+                                                        Int32 uiAction,
+                                                        Int32 uiParam,
                                                         ref RECT pvParam,
-                                                        int fWinIni);
+                                                        Int32 fWinIni);
 
         private const Int32 SPIF_SENDWININICHANGE = 2;
         private const Int32 SPIF_UPDATEINIFILE = 1;
@@ -169,12 +169,12 @@ namespace DoubleDeckerBar
         }
 
         //https://stackoverflow.com/questions/6267206/how-can-i-resize-the-desktop-work-area-using-the-spi-setworkarea-flag
-        private static bool SetWorkspace(RECT rect)
+        private static Boolean SetWorkspace(RECT rect)
         {
             // Since you've declared the P/Invoke function correctly, you don't need to
             // do the marshaling yourself manually. The .NET FW will take care of it.
 
-            bool result = SystemParametersInfo(SPI_SETWORKAREA,
+            Boolean result = SystemParametersInfo(SPI_SETWORKAREA,
                                                0,
                                                ref rect,
                                                SPIF_change);
@@ -190,7 +190,7 @@ namespace DoubleDeckerBar
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool IsWindow(IntPtr hWnd);
+        static extern Boolean IsWindow(IntPtr hWnd);
 
         readonly Timer _activeWindowTimer = new Timer
         {
@@ -234,15 +234,15 @@ namespace DoubleDeckerBar
 
         // public PatrickStart.MainWindow StartWindow = new PatrickStart.MainWindow();
 
-        public double ScrollAnimator
+        public Double ScrollAnimator
         {
-            get => (double)GetValue(ScrollAnimatorProperty);
+            get => (Double)GetValue(ScrollAnimatorProperty);
             set => SetValue(ScrollAnimatorProperty, value);
         }
 
         public static readonly DependencyProperty ScrollAnimatorProperty = DependencyProperty.Register("ScrollAnimator",
-            typeof(double), typeof(MainWindow),
-            new FrameworkPropertyMetadata((double)0, FrameworkPropertyMetadataOptions.AffectsRender));
+            typeof(Double), typeof(MainWindow),
+            new FrameworkPropertyMetadata((Double) 0, FrameworkPropertyMetadataOptions.AffectsRender));
 
 
 
@@ -254,16 +254,16 @@ namespace DoubleDeckerBar
             Width = SystemParameters.PrimaryScreenWidth;
             SetWorkspace(new RECT()
             {
-                Left = (int)SystemParameters.WorkArea.Left,
-                Top = (int)SystemParameters.WorkArea.Top,
-                Right = (int)SystemParameters.WorkArea.Right,
-                Bottom = (int)Top
+                Left = (Int32)SystemParameters.WorkArea.Left,
+                Top = (Int32)SystemParameters.WorkArea.Top,
+                Right = (Int32)SystemParameters.WorkArea.Right,
+                Bottom = (Int32)Top
             });
             ProgramWindow.WindowOpened += WindowOpened;
             Loaded += MainWindow_Loaded;
         }
 
-        private void WindowOpened(object sender, Start9.Api.Objects.WindowEventArgs e)
+        private void WindowOpened(Object sender, Start9.Api.Objects.WindowEventArgs e)
         {
             Debug.WriteLine("WINDOW OPENED");
             Dispatcher.Invoke(new Action(() =>
@@ -273,7 +273,7 @@ namespace DoubleDeckerBar
                 {
                     if (groupItems)
                     {
-                        bool isAdded = false;
+                        Boolean isAdded = false;
                         foreach (StackPanel s in TaskBand.Children)
                         {
                             if ((s.Tag.ToString() == (b.Tag as ProgramWindow).Process.MainModule.FileName) & !isAdded)
@@ -319,7 +319,7 @@ namespace DoubleDeckerBar
             DwmEnableBlurBehindWindow(new WindowInteropHelper(this).EnsureHandle(), ref blur);
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
             /*Start.ContextMenu = new TouchableContextMenu()
             {
@@ -355,7 +355,7 @@ namespace DoubleDeckerBar
 
             if (groupItems)
             {
-                List<string> RunningProcesses = new List<string>();
+                List<String> RunningProcesses = new List<String>();
 
                 foreach (var wind in ProgramWindow.UserPerceivedProgramWindows)
                 {
@@ -401,9 +401,9 @@ namespace DoubleDeckerBar
                 }
             }
 
-            foreach (string f in Directory.EnumerateFiles(Environment.ExpandEnvironmentVariables(@"%appdata%\microsoft\Internet Explorer\Quick Launch")))
+            foreach (String f in Directory.EnumerateFiles(Environment.ExpandEnvironmentVariables(@"%appdata%\microsoft\Internet Explorer\Quick Launch")))
             {
-                string path = f;
+                String path = f;
                 if (Path.GetExtension(path).Contains("lnk"))
                 {
                     //Get Executable instead of shortcut here ASAP
@@ -422,10 +422,10 @@ namespace DoubleDeckerBar
                     }
                     if (groupItems)
                     {
-                        for (int j = 0; j < TaskBand.Children.Count; j++)
+                        for (Int32 j = 0; j < TaskBand.Children.Count; j++)
                         {
                             StackPanel f = TaskBand.Children[j] as StackPanel;
-                            for (int i = 0; i < f.Children.Count; i++)
+                            for (Int32 i = 0; i < f.Children.Count; i++)
                             {
                                 IconButton t = f.Children[i] as IconButton;
                                 var prwnd = (t.Tag as ProgramWindow).Hwnd;
@@ -456,7 +456,7 @@ namespace DoubleDeckerBar
                     }
                     else
                     {
-                        for (int i = 0; i < TaskBand.Children.Count; i++)
+                        for (Int32 i = 0; i < TaskBand.Children.Count; i++)
                         {
                             IconButton t = TaskBand.Children[i] as IconButton;
                             var prwnd = (t.Tag as ProgramWindow).Hwnd;
@@ -487,8 +487,8 @@ namespace DoubleDeckerBar
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    MinutesHandTransform.Angle = (((double)(DateTime.Now.Minute)) / 60) * 360;
-                    HoursHandTransform.Angle = (((double)(DateTime.Now.Hour)) / 12) * 360;
+                    MinutesHandTransform.Angle = (((Double)(DateTime.Now.Minute)) / 60) * 360;
+                    HoursHandTransform.Angle = (((Double)(DateTime.Now.Hour)) / 12) * 360;
 
                     if (DateTime.Now.Hour <= 12)
                     {
@@ -567,7 +567,7 @@ namespace DoubleDeckerBar
         public IconButton GetIconButton(ProgramWindow p)
         {
             IconButton taskItemButton;
-            if (((!(string.IsNullOrWhiteSpace(p.Name)))) & (p.Hwnd != new WindowInteropHelper(this).Handle))
+            if (((!(String.IsNullOrWhiteSpace(p.Name)))) & (p.Hwnd != new WindowInteropHelper(this).Handle))
             {
 
                 taskItemButton = new IconButton()
@@ -637,7 +637,7 @@ namespace DoubleDeckerBar
                         }
                     }
                 };
-                flyoutWindow.Deactivated += (object sneder, EventArgs args) =>
+                flyoutWindow.Deactivated += (Object sneder, EventArgs args) =>
                 {
                     AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
                 };
@@ -647,7 +647,7 @@ namespace DoubleDeckerBar
                     Header = "New Window",
                     Style = (Style)Resources[typeof(MenuItem)]
                 };
-                newWindowMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                newWindowMenuItem.Click += (Object sneder, RoutedEventArgs args) =>
                 {
                     Process.Start(p.Process.MainModule.FileName);
                     AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
@@ -659,7 +659,7 @@ namespace DoubleDeckerBar
                     Header = "Add to Quick Launch",
                     Style = (Style)Resources[typeof(MenuItem)]
                 };
-                quickLaunchItem.Click += (object sneder, RoutedEventArgs args) =>
+                quickLaunchItem.Click += (Object sneder, RoutedEventArgs args) =>
                 {
                     Button b = GetExistingQuickLaunchButton((taskItemButton.Tag as ProgramWindow).Process.MainModule.FileName);
                     if (b == null)
@@ -680,7 +680,7 @@ namespace DoubleDeckerBar
                     Header = "Close Window",
                     Style = (Style)Resources[typeof(MenuItem)]
                 };
-                closeWindowMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                closeWindowMenuItem.Click += (Object sneder, RoutedEventArgs args) =>
                 {
                     p.Close();
                     AnimateFlyoutWindow(taskItemButton, flyoutWindow, false);
@@ -694,7 +694,7 @@ namespace DoubleDeckerBar
                         Header = "Close All Application's Windows",
                         Style = (Style)Resources[typeof(MenuItem)]
                     };
-                    closeAllWindowsMenuItem.Click += (object sneder, RoutedEventArgs args) =>
+                    closeAllWindowsMenuItem.Click += (Object sneder, RoutedEventArgs args) =>
                     {
                         foreach (Button b in (taskItemButton.Parent as StackPanel).Children)
                         {
@@ -721,7 +721,7 @@ namespace DoubleDeckerBar
                 }
 
                 taskItemButton.Click += TaskItemButton_Click;
-                taskItemButton.MouseRightButtonUp += (object sneder, MouseButtonEventArgs args) =>
+                taskItemButton.MouseRightButtonUp += (Object sneder, MouseButtonEventArgs args) =>
                 {
                     if (GetExistingQuickLaunchButton((taskItemButton.Tag as ProgramWindow).Process.MainModule.FileName) == null)
                     {
@@ -741,7 +741,7 @@ namespace DoubleDeckerBar
             }
         }
 
-        public void AnimateFlyoutWindow(UIElement sender, Window target, bool show)
+        public void AnimateFlyoutWindow(UIElement sender, Window target, Boolean show)
         {
             QuinticEase ease = new QuinticEase()
             {
@@ -774,7 +774,7 @@ namespace DoubleDeckerBar
                 opacityAnimation.To = 0;
                 marginAnimation.From = new Thickness(0);
                 marginAnimation.To = new Thickness(0, 50, 0, -50);
-                marginAnimation.Completed += (object sneder, EventArgs args) =>
+                marginAnimation.Completed += (Object sneder, EventArgs args) =>
                 {
                     target.Hide();
                 };
@@ -783,7 +783,7 @@ namespace DoubleDeckerBar
             target.BeginAnimation(Window.MarginProperty, marginAnimation);
         }
 
-        public Button GetQuickLaunchButton(string path)
+        public Button GetQuickLaunchButton(String path)
         {
             Button quickButton = new Button()
             {
@@ -815,7 +815,7 @@ namespace DoubleDeckerBar
             return quickButton;
         }
 
-        private Button GetExistingQuickLaunchButton(string fileName)
+        private Button GetExistingQuickLaunchButton(String fileName)
         {
             Button isInQuickLaunch = null;
             foreach (Button b in QuickLaunch.Children)
@@ -828,7 +828,7 @@ namespace DoubleDeckerBar
             return isInQuickLaunch;
         }
 
-        private void TaskItemButton_Click(object sender, RoutedEventArgs e)
+        private void TaskItemButton_Click(Object sender, RoutedEventArgs e)
         {
             var programWindow = ((sender as IconButton).Tag as ProgramWindow);
             var button = (sender as IconButton);
@@ -842,9 +842,9 @@ namespace DoubleDeckerBar
             }
         }
 
-        private void ScrollViewer_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void ScrollViewer_MouseWheel(Object sender, MouseWheelEventArgs e)
         {
-            double finalValue = TaskBandScrollViewer.HorizontalOffset - (e.Delta * 2);
+            Double finalValue = TaskBandScrollViewer.HorizontalOffset - (e.Delta * 2);
             /*animTimer.Start();
 
             anim.Completed += delegate
@@ -873,7 +873,7 @@ namespace DoubleDeckerBar
             }
         }
 
-        private void Start_Click(object sender, RoutedEventArgs e)
+        private void Start_Click(Object sender, RoutedEventArgs e)
         {
             //if (StartWindow.IsVisible)
             //{
