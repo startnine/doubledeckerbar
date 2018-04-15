@@ -13,12 +13,20 @@
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="PanelEdgeLeft">#FF545454</SolidColorBrush>
-    <!--LinearGradientBrush x:Key="PanelEdge" StartPoint="0,0" EndPoint="1,0">
+    
+    <LinearGradientBrush x:Key="PanelEdge" StartPoint="0,0" EndPoint="1,0">
         <LinearGradientBrush.GradientStops>
             <GradientStop Offset="0.5" Color="#FF545454" />
             <GradientStop Offset="0.5" Color="Black" />
         </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush-->
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="PanelEdgeReverse" StartPoint="0,0" EndPoint="1,0">
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0.5" Color="Black" />
+            <GradientStop Offset="0.5" Color="#FF545454" />
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
 
     <SolidColorBrush x:Key="PanelEdgeRight">#FF000000</SolidColorBrush>
     <!--LinearGradientBrush x:Key="PanelEdgeRight" StartPoint="0,0" EndPoint="1,0">
@@ -391,6 +399,48 @@
         </Setter>
     </Style>
 
+    <Style x:Key="PanelListViewItemStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border BorderThickness="1,0,0,0" BorderBrush="{DynamicResource PanelEdgeRight}">
+                        <Border Background="{DynamicResource MetalBrush}" BorderThickness="1,0" BorderBrush="{DynamicResource PanelEdgeLeft}">
+                            <ContentPresenter x:Name="ContentControl" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="{TemplateBinding Padding}" Focusable="False"/>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentControl" Storyboard.TargetProperty="Opacity" To="0.75" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ContentControl" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.25" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="StartStyle" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource MetalBrush}" />
@@ -405,198 +455,200 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid Background="{TemplateBinding Background}">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    <Border Background="{DynamicResource MetalBrush}" BorderThickness="0,0,1,0" BorderBrush="{DynamicResource PanelEdgeLeft}">
+                        <Grid>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
                                 Margin="0,5,0,-5">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Height="35">
-                                <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1"
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="35" Height="35">
+                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1"
                                      Fill="#FF000000" Stroke="Transparent" StrokeThickness="1" />
-                                <Grid x:Name="IdleBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    <Grid x:Name="IdleBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                   Margin="0" Background="Transparent" Opacity="1">
-                                    <Ellipse StrokeThickness="1">
-                                        <Ellipse.Fill>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                <LinearGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="#FF6AAE5D" />
-                                                    <GradientStop Offset="0.25" Color="#FF6CA965" />
-                                                    <GradientStop Offset="0.75" Color="#FF68B259" />
-                                                    <GradientStop Offset="1" Color="#FF6AB059" />
-                                                </LinearGradientBrush.GradientStops>
-                                            </LinearGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Stroke>
-                                            <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-                                                <LinearGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="#FF5A8668" />
-                                                    <GradientStop Offset="1" Color="#FF309B40" />
-                                                </LinearGradientBrush.GradientStops>
-                                            </LinearGradientBrush>
-                                        </Ellipse.Stroke>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="Black" Direction="225" ShadowDepth="3" BlurRadius="10"
+                                        <Ellipse StrokeThickness="1">
+                                            <Ellipse.Fill>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <LinearGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="#FF6AAE5D" />
+                                                        <GradientStop Offset="0.25" Color="#FF6CA965" />
+                                                        <GradientStop Offset="0.75" Color="#FF68B259" />
+                                                        <GradientStop Offset="1" Color="#FF6AB059" />
+                                                    </LinearGradientBrush.GradientStops>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Fill>
+                                            <Ellipse.Stroke>
+                                                <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                                                    <LinearGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="#FF5A8668" />
+                                                        <GradientStop Offset="1" Color="#FF309B40" />
+                                                    </LinearGradientBrush.GradientStops>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Stroke>
+                                            <Ellipse.Effect>
+                                                <DropShadowEffect Color="Black" Direction="225" ShadowDepth="3" BlurRadius="10"
                                                           Opacity="0.5" />
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
+                                            </Ellipse.Effect>
+                                        </Ellipse>
+                                        <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
                                          Stroke="Transparent">
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush Center="0.375,0.625" GradientOrigin="0.375,0.625">
-                                                <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="Transparent" />
-                                                    <GradientStop Offset="0.25" Color="#FF6CA965" />
-                                                    <GradientStop Offset="0.75" Color="#FF68B259" />
-                                                    <GradientStop Offset="1" Color="#7FFFFFFF" />
-                                                </RadialGradientBrush.GradientStops>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
+                                            <Ellipse.Fill>
+                                                <RadialGradientBrush Center="0.375,0.625" GradientOrigin="0.375,0.625">
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="Transparent" />
+                                                        <GradientStop Offset="0.25" Color="#FF6CA965" />
+                                                        <GradientStop Offset="0.75" Color="#FF68B259" />
+                                                        <GradientStop Offset="1" Color="#7FFFFFFF" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
                                          Stroke="Transparent">
-                                        <Ellipse.OpacityMask>
-                                            <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="0.5625"
+                                            <Ellipse.OpacityMask>
+                                                <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="0.5625"
                                                              RadiusY="0.5625">
-                                                <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0.875" Color="Black" />
-                                                    <GradientStop Offset="1" Color="Transparent" />
-                                                </RadialGradientBrush.GradientStops>
-                                            </RadialGradientBrush>
-                                        </Ellipse.OpacityMask>
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5">
-                                                <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="Transparent" />
-                                                    <GradientStop Offset="0.75" Color="#7FFFFFFF" />
-                                                    <GradientStop Offset="1" Color="White" />
-                                                </RadialGradientBrush.GradientStops>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                </Grid>
-                                <Grid x:Name="HoverBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0.875" Color="Black" />
+                                                        <GradientStop Offset="1" Color="Transparent" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.OpacityMask>
+                                            <Ellipse.Fill>
+                                                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5">
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="Transparent" />
+                                                        <GradientStop Offset="0.75" Color="#7FFFFFFF" />
+                                                        <GradientStop Offset="1" Color="White" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                    <Grid x:Name="HoverBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                   Margin="0" Background="Transparent" Opacity="0">
-                                    <Ellipse StrokeThickness="1">
-                                        <Ellipse.Fill>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                <LinearGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="#FF4DC437" />
-                                                    <GradientStop Offset="0.25" Color="#FF51BC45" />
-                                                    <GradientStop Offset="0.75" Color="#FF49CB2F" />
-                                                    <GradientStop Offset="1" Color="#FF4CC72F" />
-                                                </LinearGradientBrush.GradientStops>
-                                            </LinearGradientBrush>
-                                        </Ellipse.Fill>
-                                        <Ellipse.Stroke>
-                                            <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-                                                <LinearGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="#FF46935E" />
-                                                    <GradientStop Offset="1" Color="#FF00BB1C" />
-                                                </LinearGradientBrush.GradientStops>
-                                            </LinearGradientBrush>
-                                        </Ellipse.Stroke>
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="#FF49CB2F" Direction="0" ShadowDepth="0"
+                                        <Ellipse StrokeThickness="1">
+                                            <Ellipse.Fill>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <LinearGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="#FF4DC437" />
+                                                        <GradientStop Offset="0.25" Color="#FF51BC45" />
+                                                        <GradientStop Offset="0.75" Color="#FF49CB2F" />
+                                                        <GradientStop Offset="1" Color="#FF4CC72F" />
+                                                    </LinearGradientBrush.GradientStops>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Fill>
+                                            <Ellipse.Stroke>
+                                                <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                                                    <LinearGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="#FF46935E" />
+                                                        <GradientStop Offset="1" Color="#FF00BB1C" />
+                                                    </LinearGradientBrush.GradientStops>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Stroke>
+                                            <Ellipse.Effect>
+                                                <DropShadowEffect Color="#FF49CB2F" Direction="0" ShadowDepth="0"
                                                           BlurRadius="15" Opacity="1" />
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
+                                            </Ellipse.Effect>
+                                        </Ellipse>
+                                        <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
                                          Stroke="Transparent">
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush Center="0.375,0.625" GradientOrigin="0.375,0.625">
-                                                <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="Transparent" />
-                                                    <GradientStop Offset="0.25" Color="#FF51BC45" />
-                                                    <GradientStop Offset="0.75" Color="#FF49CB2F" />
-                                                    <GradientStop Offset="1" Color="#7FFFFFFF" />
-                                                </RadialGradientBrush.GradientStops>
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
+                                            <Ellipse.Fill>
+                                                <RadialGradientBrush Center="0.375,0.625" GradientOrigin="0.375,0.625">
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="Transparent" />
+                                                        <GradientStop Offset="0.25" Color="#FF51BC45" />
+                                                        <GradientStop Offset="0.75" Color="#FF49CB2F" />
+                                                        <GradientStop Offset="1" Color="#7FFFFFFF" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="1"
                                          Stroke="Transparent">
-                                        <Ellipse.OpacityMask>
-                                            <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="0.5625"
+                                            <Ellipse.OpacityMask>
+                                                <RadialGradientBrush Center="1,0" GradientOrigin="1,0" RadiusX="0.5625"
                                                              RadiusY="0.5625">
-                                                <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0.875" Color="Black" />
-                                                    <GradientStop Offset="1" Color="Transparent" />
-                                                </RadialGradientBrush.GradientStops>
-                                            </RadialGradientBrush>
-                                        </Ellipse.OpacityMask>
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0.875" Color="Black" />
+                                                        <GradientStop Offset="1" Color="Transparent" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.OpacityMask>
+                                            <Ellipse.Fill>
+                                                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5">
+                                                    <RadialGradientBrush.GradientStops>
+                                                        <GradientStop Offset="0" Color="Transparent" />
+                                                        <GradientStop Offset="0.75" Color="#7FFFFFFF" />
+                                                        <GradientStop Offset="1" Color="White" />
+                                                    </RadialGradientBrush.GradientStops>
+                                                </RadialGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                    <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
                                         <Ellipse.Fill>
-                                            <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5">
+                                            <RadialGradientBrush GradientOrigin="0.5,0.625" Center="0.5,0.625" RadiusX="1.0625"
+                                                         RadiusY="1">
                                                 <RadialGradientBrush.GradientStops>
-                                                    <GradientStop Offset="0" Color="Transparent" />
-                                                    <GradientStop Offset="0.75" Color="#7FFFFFFF" />
-                                                    <GradientStop Offset="1" Color="White" />
+                                                    <GradientStop Offset="0.375" Color="Transparent" />
+                                                    <GradientStop Offset="0.875" Color="#FFFFFFFF" />
                                                 </RadialGradientBrush.GradientStops>
                                             </RadialGradientBrush>
                                         </Ellipse.Fill>
                                     </Ellipse>
-                                </Grid>
-                                <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
-                                    <Ellipse.Fill>
-                                        <RadialGradientBrush GradientOrigin="0.5,0.625" Center="0.5,0.625" RadiusX="1.0625"
-                                                         RadiusY="1">
-                                            <RadialGradientBrush.GradientStops>
-                                                <GradientStop Offset="0.375" Color="Transparent" />
-                                                <GradientStop Offset="0.875" Color="#FFFFFFFF" />
-                                            </RadialGradientBrush.GradientStops>
-                                        </RadialGradientBrush>
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <Canvas Width="13.500054199161586821763898920888" Height="24" Margin="0.5,0,-0.5,0">
-                                    <Canvas.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <LinearGradientBrush.GradientStops>
-                                                <GradientStop Offset="0" Color="White" />
-                                                <GradientStop Offset="1" Color="#FFDFDFDF" />
-                                            </LinearGradientBrush.GradientStops>
-                                        </LinearGradientBrush>
-                                    </Canvas.Background>
-                                    <Canvas.OpacityMask>
-                                        <VisualBrush TileMode="None" Viewport="0,0,1,1"
+                                    <Canvas Width="13.500054199161586821763898920888" Height="24" Margin="0.5,0,-0.5,0">
+                                        <Canvas.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <LinearGradientBrush.GradientStops>
+                                                    <GradientStop Offset="0" Color="White" />
+                                                    <GradientStop Offset="1" Color="#FFDFDFDF" />
+                                                </LinearGradientBrush.GradientStops>
+                                            </LinearGradientBrush>
+                                        </Canvas.Background>
+                                        <Canvas.OpacityMask>
+                                            <VisualBrush TileMode="None" Viewport="0,0,1,1"
                                                  ViewportUnits="RelativeToBoundingBox"
                                                  Viewbox="0,0,144.00073,256.00027" ViewboxUnits="Absolute">
-                                            <VisualBrush.Visual>
-                                                <Canvas Name="svg8" Width="144.00073" Height="256.00027">
-                                                    <Canvas.RenderTransform>
-                                                        <TranslateTransform X="0" Y="0" />
-                                                    </Canvas.RenderTransform>
-                                                    <Canvas.Resources />
-                                                    <!--Unknown tag: sodipodi:namedview-->
-                                                    <!--Unknown tag: metadata-->
-                                                    <Canvas Name="layer1">
+                                                <VisualBrush.Visual>
+                                                    <Canvas Name="svg8" Width="144.00073" Height="256.00027">
                                                         <Canvas.RenderTransform>
-                                                            <TranslateTransform X="-1.8930132e-5" Y="-40.999866" />
+                                                            <TranslateTransform X="0" Y="0" />
                                                         </Canvas.RenderTransform>
-                                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                        <Canvas.Resources />
+                                                        <!--Unknown tag: sodipodi:namedview-->
+                                                        <!--Unknown tag: metadata-->
+                                                        <Canvas Name="layer1">
+                                                            <Canvas.RenderTransform>
+                                                                <TranslateTransform X="-1.8930132e-5" Y="-40.999866" />
+                                                            </Canvas.RenderTransform>
+                                                            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                                           Name="path4485" Fill="#FF000000" StrokeThickness="0.31324857"
                                                           Stroke="#FF000000" StrokeLineJoin="Miter"
                                                           StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-                                                            <Path.Data>
-                                                                <PathGeometry
+                                                                <Path.Data>
+                                                                    <PathGeometry
                                                                 Figures="M 0.38570981 108.65214 C 5.5479943 22.701762 116.12822 17.544525 141.23878 100.63075 52.19885 44.948872 33.173221 180.00833 143.83516 152.4612 142.17373 190.6451 119.6223 277.64656 13.367569 296.84602 51.063522 272.16844 77.598523 245.46586 78.925911 193.80218 c 0 0 -83.7024856 0.80034 -78.54020119 -85.15004 z"
                                                                 FillRule="NonZero" />
-                                                            </Path.Data>
-                                                        </Path>
+                                                                </Path.Data>
+                                                            </Path>
+                                                        </Canvas>
                                                     </Canvas>
-                                                </Canvas>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </Canvas.OpacityMask>
-                                    <Canvas.Effect>
-                                        <DropShadowEffect x:Name="DropShadow" Color="Black" Direction="275"
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                        </Canvas.OpacityMask>
+                                        <Canvas.Effect>
+                                            <DropShadowEffect x:Name="DropShadow" Color="Black" Direction="275"
                                                       ShadowDepth="0.5" BlurRadius="2.5" Opacity="1" />
-                                    </Canvas.Effect>
-                                </Canvas>
-                            </Grid>
-                            <Label Foreground="{TemplateBinding Foreground}" FontStyle="Italic" FontFamily="Segoe UI"
+                                        </Canvas.Effect>
+                                    </Canvas>
+                                </Grid>
+                                <Label Foreground="{TemplateBinding Foreground}" FontStyle="Italic" FontFamily="Segoe UI"
                                FontSize="14">
-                                start
-                            </Label>
-                        </StackPanel>
-                        <Canvas HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2" Background="{DynamicResource PanelEdgeRight}"/>
-                    </Grid>
+                                    start
+                                </Label>
+                            </StackPanel>
+                            <Canvas HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2" Background="{DynamicResource PanelEdgeRight}"/>
+                        </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Trigger.EnterActions>

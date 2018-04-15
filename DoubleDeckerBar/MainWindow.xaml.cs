@@ -335,10 +335,40 @@ namespace DoubleDeckerBar
 
         private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
-            PinnedTiles.Add(new Button()
+            StackPanel stack = new StackPanel()
             {
-                Content = "AAAAA"
-            });
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+            AppxTools.TileInfo Info = new AppxTools.TileInfo("Microsoft.BingTravel_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingSports_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingNews_3.0.4.213_x64__8wekyb3d8bbwe");
+            Info.NotificationReceived += (object sneder, AppxTools.NotificationInfoEventArgs args) =>
+            {
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    stack.Children.Clear();
+                    if (args.NewNotification.Images.Count > 0)
+                    {
+
+                        Canvas c = new Canvas()
+                        {
+                            Width = 100,
+                            Height = 100,
+                            Background = args.NewNotification.Images[0]
+                        };
+                        stack.Children.Add(c);
+                    }
+
+                    if (args.NewNotification.Text.Count > 0)
+                    {
+                        TextBlock t = new TextBlock()
+                        {
+                            Text = args.NewNotification.Text[0]
+                        };
+                        stack.Children.Add(t);
+                    }
+                }));
+            };
+            PinnedTiles.Add(stack);
             /*Start.ContextMenu = new TouchableContextMenu()
             {
                 ItemsSource = new List<MenuItem>()
@@ -900,6 +930,16 @@ namespace DoubleDeckerBar
             //    StartWindow.Top = (Top - StartWindow.Height) + 24;
             //    StartWindow.Show();
             //}
+        }
+
+        private void PanelsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var item = (PanelsListView.SelectedItem as StackPanel);
+            if (item.Tag is AppxTools.TileInfo)
+            {
+                var info = item.Tag as AppxTools.TileInfo;
+                //info.
+            }
         }
     }
 }

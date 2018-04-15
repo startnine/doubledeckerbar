@@ -48,7 +48,7 @@
             </StackPanel>
         </Grid>
         <Grid Background="#01000000" VerticalAlignment="Stretch">
-            <ListView ItemsSource="{Binding PinnedTiles}" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <ListView x:Name="PanelsListView" ItemsSource="{Binding PinnedTiles}" HorizontalAlignment="Center" VerticalAlignment="Stretch" ItemContainerStyle="{DynamicResource PanelListViewItemStyle}" SelectionChanged="PanelsListView_SelectionChanged">
                 <ListView.Template>
                     <ControlTemplate>
                         <WrapPanel IsItemsHost="True" VerticalAlignment="Stretch"/>
