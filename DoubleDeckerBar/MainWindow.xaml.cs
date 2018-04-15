@@ -21,13 +21,14 @@ using System.Windows.Interop;
 using System.Windows.Media.Animation;
 using System.IO;
 using System.Windows.Controls.Primitives;
+using System.Collections.ObjectModel;
 
 namespace DoubleDeckerBar
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : DoubleContentWindow
     {
         //TEMPORARY STAND-INS FOR SETTINGS
         Boolean groupItems = true;
@@ -168,6 +169,9 @@ namespace DoubleDeckerBar
             public Int32 Bottom;
         }
 
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmIsCompositionEnabled(out bool enabled);
+
         //https://stackoverflow.com/questions/6267206/how-can-i-resize-the-desktop-work-area-using-the-spi-setworkarea-flag
         private static Boolean SetWorkspace(RECT rect)
         {
@@ -204,12 +208,6 @@ namespace DoubleDeckerBar
             Interval = 1
         };
 
-
-
-
-
-
-
         /*DoubleAnimation anim = new DoubleAnimation()
         {
             From = TaskBandScrollViewer.HorizontalOffset,
@@ -242,9 +240,16 @@ namespace DoubleDeckerBar
 
         public static readonly DependencyProperty ScrollAnimatorProperty = DependencyProperty.Register("ScrollAnimator",
             typeof(Double), typeof(MainWindow),
-            new FrameworkPropertyMetadata((Double) 0, FrameworkPropertyMetadataOptions.AffectsRender));
+            new FrameworkPropertyMetadata((Double)0, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        public ObservableCollection<UIElement> PinnedTiles
+        {
+            get => (ObservableCollection<UIElement>)GetValue(PinnedTilesProperty);
+            set => SetValue(PinnedTilesProperty, (value));
+        }
 
+        public static readonly DependencyProperty PinnedTilesProperty =
+            DependencyProperty.Register("PinnedTiles", typeof(ObservableCollection<UIElement>), typeof(MainWindow), new PropertyMetadata(new ObservableCollection<UIElement>()));
 
         public MainWindow()
         {
@@ -310,17 +315,30 @@ namespace DoubleDeckerBar
             var hwnd = new WindowInteropHelper(this).Handle;
             var extendedStyle = WinApi.GetWindowLong(hwnd, WinApi.GwlExstyle);
             WinApi.SetWindowLong(hwnd, WinApi.GwlExstyle, extendedStyle.ToInt32() | WinApi.WsExToolwindow);
-            DWM_BLURBEHIND blur = new DWM_BLURBEHIND()
+            if (Environment.OSVersion.Version.Major >= 6)
             {
-                dwFlags = DWM_BB.Enable,
-                fEnable = true,
-                hRgnBlur = IntPtr.Zero
-            };
-            DwmEnableBlurBehindWindow(new WindowInteropHelper(this).EnsureHandle(), ref blur);
+                bool enabled = false;
+                DwmIsCompositionEnabled(out enabled);
+                if (enabled)
+                {
+                    DWM_BLURBEHIND blur = new DWM_BLURBEHIND()
+                    {
+                        dwFlags = DWM_BB.Enable,
+                        fEnable = true,
+                        hRgnBlur = IntPtr.Zero
+                    };
+                    DwmEnableBlurBehindWindow(new WindowInteropHelper(this).EnsureHandle(), ref blur);
+                }
+
+            }
         }
 
         private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
+            PinnedTiles.Add(new Button()
+            {
+                Content = "AAAAA"
+            });
             /*Start.ContextMenu = new TouchableContextMenu()
             {
                 ItemsSource = new List<MenuItem>()
@@ -487,8 +505,6 @@ namespace DoubleDeckerBar
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    MinutesHandTransform.Angle = (((Double)(DateTime.Now.Minute)) / 60) * 360;
-                    HoursHandTransform.Angle = (((Double)(DateTime.Now.Hour)) / 12) * 360;
 
                     if (DateTime.Now.Hour <= 12)
                     {
