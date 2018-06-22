@@ -1,36 +1,36 @@
-﻿//using DoubleDeckerBar.View;
-using DoubleDeckerBar.View;
-using Start9.Api.Contracts;
+﻿using DoubleDeckerBar.View;
 using System;
 using System.AddIn;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace DoubleDeckerBar
 {
-    [AddIn("Calculator AddIn", Version = "1.0.0.0")]
-    public class AddInCalcV1 : ICalculator
+    [AddIn("Double Decker Bar", Version = "1.0.0.0")]
+    public class DoubleDeckerBarAddIn : IModule
     {
-        public Double Add(Double a, Double b)
+        public IMessage SendMessage(IMessage message)
         {
-            return a + b;
+            MessageBox.Show(message.Text + Environment.NewLine + message.Object.ToString());
+            return Message.Empty;
         }
 
-        public Double Subtract(Double a, Double b)
+        public DoubleDeckerBarAddIn()
         {
-            return a - b;
-        }
+            void Start()
+            {
+                Application.ResourceAssembly = Assembly.GetExecutingAssembly();
+                App.Main();
+            }
 
-        public Double Multiply(Double a, Double b)
-        {
-            return a * b;
-        }
-
-        public Double Divide(Double a, Double b)
-        {
-            return a / b;
+            var t = new Thread(Start);
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
         }
     }
 }

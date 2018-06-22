@@ -335,6 +335,7 @@ namespace DoubleDeckerBar
 
         private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
+            return;
             StackPanel stack = new StackPanel()
             {
                 Orientation = Orientation.Horizontal,
