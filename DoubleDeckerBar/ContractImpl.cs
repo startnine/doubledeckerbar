@@ -1,26 +1,37 @@
-﻿using DoubleDeckerBar.View;
+﻿using DoubleDeckerBar.Views;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DoubleDeckerBar
 {
-    struct Message : IMessage
+    public class MessageEntry : IMessageEntry
     {
-        public Message(String message = "", Object o = null)
+        public MessageEntry(Type type, String name)
         {
-            Text = message;
-            Object = o;
+            MessageObjectType = type;
+            FriendlyName = name;
         }
 
-        public static Message Empty { get; } = new Message();
+        public Type MessageObjectType { get; }
 
-        public String Text { get; }
-        public Object Object { get; }
+        public String FriendlyName { get; }
+
+        public event EventHandler<MessageReceivedEventArgs> MessageSent;
     }
 
-    class DoubleDeckerBarConfiguration : IConfiguration
+    public class ConfigurationEntry : IConfigurationEntry
     {
-        public IDictionary Entries => GetType().GetFields().ToDictionary(k => k.Name, v => v.GetValue(this));
+        public ConfigurationEntry(Object obj, String name)
+        {
+            Object = obj;
+            FriendlyName = name;
+        }
+
+        public Object Object { get; }
+
+        public String FriendlyName { get; }
     }
 }

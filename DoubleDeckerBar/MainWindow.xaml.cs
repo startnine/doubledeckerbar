@@ -30,10 +30,6 @@ namespace DoubleDeckerBar
     /// </summary>
     public partial class MainWindow : DoubleContentWindow
     {
-        //TEMPORARY STAND-INS FOR SETTINGS
-        Boolean groupItems = true;
-        //END TEMPORARY STAND-INS FOR SETTINGS
-
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, Int32 Msg, Int32 wParam, Int32 lParam);
 
@@ -276,7 +272,7 @@ namespace DoubleDeckerBar
                 IconButton b = GetIconButton(e.Window);
                 if (b != null)
                 {
-                    if (groupItems)
+                    if (((DoubleDeckerBarConfiguration) DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
                     {
                         Boolean isAdded = false;
                         foreach (StackPanel s in TaskBand.Children)
@@ -333,6 +329,7 @@ namespace DoubleDeckerBar
             }
         }
 
+        // TODO: FIX THIS METHOD
         private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
             return;
@@ -402,7 +399,7 @@ namespace DoubleDeckerBar
             };*/
 
 
-            if (groupItems)
+            if (((DoubleDeckerBarConfiguration) DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
             {
                 List<String> RunningProcesses = new List<String>();
 
@@ -469,7 +466,7 @@ namespace DoubleDeckerBar
                     {
                         activeWin = WinApi.GetForegroundWindow();
                     }
-                    if (groupItems)
+                    if (((DoubleDeckerBarConfiguration)DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
                     {
                         for (Int32 j = 0; j < TaskBand.Children.Count; j++)
                         {
@@ -565,7 +562,7 @@ namespace DoubleDeckerBar
                     {
                         if ((134 * TaskBand.Children.Count) > TaskBandScrollViewer.ActualWidth)
                         {
-                            if (groupItems)
+                            if (((DoubleDeckerBarConfiguration) DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
                             {
                                 foreach (StackPanel s in TaskBand.Children)
                                 {
@@ -585,7 +582,7 @@ namespace DoubleDeckerBar
                         }
                         else
                         {
-                            if (groupItems)
+                            if (((DoubleDeckerBarConfiguration) DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
                             {
                                 foreach (StackPanel s in TaskBand.Children)
                                 {
@@ -734,7 +731,7 @@ namespace DoubleDeckerBar
                 };
                 flyoutContent.Children.Add(closeWindowMenuItem);
 
-                if (groupItems)
+                if (((DoubleDeckerBarConfiguration) DoubleDeckerBarAddIn.Instance.Configuration).GroupItems)
                 {
                     MenuItem closeAllWindowsMenuItem = new MenuItem()
                     {
