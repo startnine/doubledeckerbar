@@ -11,15 +11,26 @@ namespace DoubleDeckerBar
     {
         public MessageEntry(Type type, String name)
         {
-            MessageObjectType = type;
+            Type = type;
             FriendlyName = name;
         }
 
-        public Type MessageObjectType { get; }
-
+        public Type Type { get; }
         public String FriendlyName { get; }
 
         public event EventHandler<MessageReceivedEventArgs> MessageSent;
+    }
+
+    public class Message : IMessage
+    {
+        public Message(Object o, IMessageEntry entry)
+        {
+            Object = o;
+            MessageEntry = entry;
+        }
+
+        public Object Object { get; }
+        public IMessageEntry MessageEntry { get; }
     }
 
     public class ConfigurationEntry : IConfigurationEntry

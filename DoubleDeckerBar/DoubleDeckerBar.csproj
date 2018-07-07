@@ -62,7 +62,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Start9.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Start9.Api.1.0.0-CI00048\lib\net40\Start9.Api.dll</HintPath>
+      <HintPath>..\packages\Start9.Api.1.0.0-CI00115\lib\net40\Start9.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn" />
@@ -132,9 +132,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DoubleDeckerBar.View\DoubleDeckerBar.View.csproj">
-      <Project>{0802E603-5220-4B5F-B28B-1784FA308E17}</Project>
-      <Name>DoubleDeckerBar.View</Name>
+    <ProjectReference Include="..\DoubleDeckerBar.Views\DoubleDeckerBar.Views.csproj">
+      <Project>{CDD51319-2904-48EC-9BA9-1004F230068B}</Project>
+      <Name>DoubleDeckerBar.Views</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

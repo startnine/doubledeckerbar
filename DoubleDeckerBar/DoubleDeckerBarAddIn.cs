@@ -16,24 +16,32 @@ namespace DoubleDeckerBar
     {
         public static DoubleDeckerBarAddIn Instance { get; private set; }
 
-        public IConfiguration Configuration { get; } = new DoubleDeckerBarConfiguration();
+        public IConfiguration Configuration { get; set; } = new DoubleDeckerBarConfiguration();
 
         public IMessageContract MessageContract { get; } = new DoubleDeckerBarMessageContract();
 
         public IReceiverContract ReceiverContract => null;
 
+        public IHost Host { get; private set; }
+
         public void Initialize(IHost host)
         {
             void Start()
             {
+                Instance = this;
+                Host = host;
                 Application.ResourceAssembly = Assembly.GetExecutingAssembly();
                 App.Main();
-                Instance = this;
             }
 
             var t = new Thread(Start);
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+
+                MessageBox.Show(e.ExceptionObject.ToString(), "Uh oh E R R O R E");
+            };
         }
     }
 

@@ -22,6 +22,9 @@ using System.Windows.Media.Animation;
 using System.IO;
 using System.Windows.Controls.Primitives;
 using System.Collections.ObjectModel;
+using Start9.Api;
+using Start9.Api.DiskItems;
+using System.Globalization;
 
 namespace DoubleDeckerBar
 {
@@ -156,7 +159,7 @@ namespace DoubleDeckerBar
         private const Int32 SPI_SETWORKAREA = 47;
         private const Int32 SPI_GETWORKAREA = 48;
 
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]  //THIS IS THE DEFAULT WHY DO PEOPLE DO THIS
         public struct RECT
         {
             public Int32 Left;
@@ -313,7 +316,7 @@ namespace DoubleDeckerBar
             WinApi.SetWindowLong(hwnd, WinApi.GwlExstyle, extendedStyle.ToInt32() | WinApi.WsExToolwindow);
             if (Environment.OSVersion.Version.Major >= 6)
             {
-                bool enabled = false;
+                    bool enabled = false;
                 DwmIsCompositionEnabled(out enabled);
                 if (enabled)
                 {
@@ -328,7 +331,7 @@ namespace DoubleDeckerBar
 
             }
         }
-
+    
         // TODO: FIX THIS METHOD
         private void MainWindow_Loaded(Object sender, RoutedEventArgs e)
         {
@@ -338,8 +341,8 @@ namespace DoubleDeckerBar
                 Orientation = Orientation.Horizontal,
                 VerticalAlignment = VerticalAlignment.Stretch
             };
-            AppxTools.TileInfo Info = new AppxTools.TileInfo("Microsoft.BingTravel_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingSports_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingNews_3.0.4.213_x64__8wekyb3d8bbwe");
-            Info.NotificationReceived += (object sneder, AppxTools.NotificationInfoEventArgs args) =>
+            Appx.AppInfo Info = new Appx.AppInfo("Microsoft.BingTravel_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingSports_3.0.4.212_x64__8wekyb3d8bbwe"); //Microsoft.BingNews_3.0.4.213_x64__8wekyb3d8bbwe");
+            Info.NotificationReceived += (object sneder, Appx.NotificationInfoEventArgs args) =>
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
@@ -403,7 +406,7 @@ namespace DoubleDeckerBar
             {
                 List<String> RunningProcesses = new List<String>();
 
-                foreach (var wind in ProgramWindow.UserPerceivedProgramWindows)
+                foreach (var wind in ProgramWindow.ProgramWindows)
                 {
                     if (!RunningProcesses.Contains(wind.Process.MainModule.FileName))
                     {
@@ -424,7 +427,7 @@ namespace DoubleDeckerBar
                     TaskBand.Children.Add(programStackPanel);
                 }
 
-                foreach (var wind in ProgramWindow.UserPerceivedProgramWindows)
+                foreach (var wind in ProgramWindow.ProgramWindows)
                 {
                     foreach (StackPanel t in TaskBand.Children)
                     {
@@ -437,7 +440,7 @@ namespace DoubleDeckerBar
             }
             else
             {
-                foreach (ProgramWindow p in ProgramWindow.UserPerceivedProgramWindows)
+                foreach (ProgramWindow p in ProgramWindow.ProgramWindows)
                 {
                     IconButton b = GetIconButton(p);
                     if (b != null)
@@ -453,7 +456,6 @@ namespace DoubleDeckerBar
                 if (Path.GetExtension(path).Contains("lnk"))
                 {
                     //Get Executable instead of shortcut here ASAP
-                    path = ShortcutTools.GetTargetPath(path);
                 }
                 QuickLaunch.Children.Add(GetQuickLaunchButton(path));
             }
@@ -802,7 +804,7 @@ namespace DoubleDeckerBar
 
             if (show)
             {
-                target.Left = MainTools.GetDpiScaledGlobalControlPosition(sender).X + ((sender as Control).Width / 2) - (target.Width / 2);
+                target.Left = sender.PointToScreenInWpfUnits(new Point()).X + ((sender as Control).Width / 2) - (target.Width / 2);
                 target.Top = Top - target.Height;
                 target.Show();
                 target.Focus();
@@ -837,7 +839,7 @@ namespace DoubleDeckerBar
                 {
                     Width = 16,
                     Height = 16,
-                    Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16))
+                    Background = (ImageBrush) new DiskItemToIconImageBrushConverter().Convert(new DiskItem(path), typeof(ImageBrush), null, CultureInfo.CurrentCulture)
                 }
                 /*Background = new ImageBrush(MiscTools.GetIconFromFilePath(path, 16)),
                 BorderThickness = new Thickness(0),
@@ -919,23 +921,15 @@ namespace DoubleDeckerBar
 
         private void Start_Click(Object sender, RoutedEventArgs e)
         {
-            //if (StartWindow.IsVisible)
-            //{
-            //    StartWindow.Hide();
-            //}
-            //else
-            //{
-            //    StartWindow.Top = (Top - StartWindow.Height) + 24;
-            //    StartWindow.Show();
-            //}
+            DoubleDeckerBarAddIn.Instance.Host.SendMessage(new Message(DBNull.Value, ((DoubleDeckerBarMessageContract) DoubleDeckerBarAddIn.Instance.MessageContract).ButtonClickedEntry));
         }
 
         private void PanelsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = (PanelsListView.SelectedItem as StackPanel);
-            if (item.Tag is AppxTools.TileInfo)
+            if (item.Tag is Appx.AppInfo)
             {
-                var info = item.Tag as AppxTools.TileInfo;
+                var info = item.Tag as Appx.AppInfo;
                 //info.
             }
         }
